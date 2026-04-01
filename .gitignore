@@ -1,0 +1,59 @@
+# --- Entornos Virtuales y Python ---
+.venv/
+venv/
+env/
+bin/
+lib/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.installed.cfg
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# --- Archivos de compilación y caché ---
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.coverage
+htmlcov/
+
+# --- Configuración y Secretos (CRÍTICO) ---
+.env
+.env.local
+.env.dev
+.env.prod
+*.secrets
+auth_token.txt
+
+# --- Base de Datos Local ---
+*.sqlite3
+postgres_data/
+
+# --- Docker ---
+.docker/
+# Si quieres ignorar logs de docker específicos
+*.log
+docker-compose.override.yml
+
+# --- Editores y Sistema Operativo ---
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# --- Estáticos y Media (Django) ---
+static/
+staticfiles/
+media/
