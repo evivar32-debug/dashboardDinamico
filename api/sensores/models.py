@@ -1,38 +1,68 @@
 from django.db import models
 
 class Dispositivo(models.Model):
-    # El ID único de la placa Wemos (ChipID)
-    chip_id = models.SlugField(max_length=50, unique=True, help_text="ID único del hardware (ej: 16777215)")
-    nombre_placa = models.CharField(max_length=100, help_text="Ej: Nodo Central Tablero")
-    
+    """Representa la unidad física (Wemos D1, ESP32, etc.)"""
+    chip_id = models.SlugField(
+        max_length=50, 
+        unique=True, 
+        db_index=True,
+        help_text="ID único del hardware (ej: 16777215)"
+    )
+    nombre_placa = models.CharField(max_length=100, help_text="Ej: Tablero Control Norte")
+    ubicacion = models.CharField(max_length=100, blank=True, help_text="Ej: Sala de Máquinas")
+
+    class Meta:
+        verbose_name = "Dispositivo"
+        verbose_name_plural = "1. Dispositivos"
+
     def __str__(self):
         return f"{self.nombre_placa} [{self.chip_id}]"
 
+
 class Sensor(models.Model):
-    # Un dispositivo puede tener muchos sensores
-    dispositivo = models.ForeignKey(Dispositivo, default=None, on_delete=models.CASCADE, related_name='sensores')
-    
-    nombre = models.CharField(max_length=100, help_text="Ej: Temp Motor, Humedad Ambiente")
-    pin_conexion = models.IntegerField(default=0, help_text="Pin GPIO usado en la Wemos")
-    tipo = models.CharField(max_length=50, default="DHT11")
-
-    def __str__(self):
-        return f"{self.nombre} (en {self.dispositivo.nombre_placa})"
-
-class Lectura(models.Model):
-    # Relación: Si se borra el sensor, se borran sus lecturas (CASCADE)
-    sensor = models.ForeignKey(Sensor, on_delete=models.CASCADE, related_name='lecturas')
-    
-    tipo = models.CharField(max_length=30, default="Temperatura") # Temperatura, Humedad, presion, etc. 
-    valor = models.FloatField()
-    
-    # auto_now_add es clave para filtrar por días/semanas/meses después
-    timestamp = models.DateTimeField(auto_now_add=True)
+    """Representa un componente conectado a un pin específico del dispositivo"""
+    dispositivo = models.ForeignKey(
+        Dispositivo, 
+        on_delete=models.CASCADE, 
+        related_name='sensores'
+    )
+    nombre = models.CharField(max_length=100, help_text="Ej: Temperatura Motor")
+    slug = models.SlugField(
+        max_length=100, 
+        unique=True, 
+        db_index=True,
+        help_text="Identificador técnico (ej: temp_motor)"
+    )
+    pin_conexion = models.IntegerField(help_text="Pin GPIO (ej: 5 para D1)")
+    tipo = models.CharField(max_length=50, default="DHT11", help_text="Ej: DHT22, PT100, NTC")
 
     class Meta:
-        # Ordenamos por defecto de la más reciente a la más antigua
+        verbose_name = "Sensor"
+        verbose_name_plural = "2. Sensores"
+        # Regla de Oro: Un pin solo puede tener un sensor EN ESA PLACA específica
+        constraints = [
+            models.UniqueConstraint(fields=['dispositivo', 'pin_conexion'], name='unique_pin_per_device')
+        ]
+
+    def __str__(self):
+        return f"{self.nombre} ({self.slug}) en {self.dispositivo.nombre_placa}"
+
+
+class Lectura(models.Model):
+    """Registro histórico de telemetría"""
+    sensor = models.ForeignKey(
+        Sensor, 
+        on_delete=models.CASCADE, 
+        related_name='lecturas'
+    )
+    tipo = models.CharField(max_length=30, default="Temperatura")
+    valor = models.FloatField()
+    timestamp = models.DateTimeField(auto_now_add=True, db_index=True)
+
+    class Meta:
+        verbose_name = "Lectura"
+        verbose_name_plural = "3. Lecturas"
         ordering = ['-timestamp']
 
     def __str__(self):
-        return f"{self.sensor.nombre} - {self.tipo}: {self.valor} | {self.timestamp.strftime('%d/%m/%Y %H:%M')}"
-    
+        return f"{self.sensor.slug} | {self.valor} | {self.timestamp.strftime('%d/%m %H:%M')}"

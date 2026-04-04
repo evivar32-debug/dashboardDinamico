@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard IoT - Monitoreo Industrial</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="../style/menu.css">
+</head>
+<body>
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h3>IoT Control Center</h3>
+        </div>
+        <div class="menu-container" id="menuDispositivos">
+            <div style="padding: 20px; text-align: center; color: #546e7a;">
+                Cargando dispositivos...
+            </div>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="header-info">
+            <h2 id="sensorTitulo">Seleccione un sensor</h2>
+            <div id="statusBadge" class="status-badge" style="display: none;">Monitoreo en vivo activo</div>
+        </div>
+
+        <div class="chart-container">
+            <canvas id="iotChart"></canvas>
+        </div>
+    </div>
+
+    <script src="../js/menu.js" defer></script>
+</body>
+</html>

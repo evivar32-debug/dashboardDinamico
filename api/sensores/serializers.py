@@ -2,53 +2,61 @@ from rest_framework import serializers
 from .models import Dispositivo, Sensor, Lectura
 
 class DispositivoSerializer(serializers.ModelSerializer):
+    """Serializer básico para ABM de dispositivos"""
     class Meta:
         model = Dispositivo
         fields = '__all__'
 
 class SensorSerializer(serializers.ModelSerializer):
-    # Mostramos el nombre de la placa en lugar de solo el ID numérico
+    """Serializer para sensores, incluyendo el nombre de la placa dueña"""
     dispositivo_nombre = serializers.ReadOnlyField(source='dispositivo.nombre_placa')
+    dispositivo_chip = serializers.ReadOnlyField(source='dispositivo.chip_id')
 
     class Meta:
         model = Sensor
-        fields = ['id', 'dispositivo', 'dispositivo_nombre', 'nombre', 'pin_conexion', 'tipo']
+        fields = ['id', 'nombre', 'slug', 'tipo', 'pin_conexion', 'dispositivo_nombre', 'dispositivo_chip']
 
 class LecturaSerializer(serializers.ModelSerializer):
-    # Estos campos son para que la Wemos D1 nos hable de forma sencilla
+    """Serializer para la ingesta de telemetría desde hardware (Wemos/ESP32)"""
     chip_id = serializers.CharField(write_only=True)
-    sensor_nombre = serializers.CharField(write_only=True)
+    
+    # Vinculamos el slug del JSON directamente con la instancia del modelo Sensor
+    sensor_slug = serializers.SlugRelatedField(
+        queryset=Sensor.objects.select_related('dispositivo').all(),
+        slug_field='slug',
+        source='sensor'
+    )
 
     class Meta:
         model = Lectura
-        fields = ['chip_id', 'sensor_nombre', 'tipo', 'valor', 'timestamp']
+        fields = ['chip_id', 'sensor_slug', 'tipo', 'valor', 'timestamp']
         read_only_fields = ['timestamp']
 
+    def validate_valor(self, value):
+        """Ejemplo de validación de ingeniería: Evitar ruidos o valores fuera de rango"""
+        if value < -50 or value > 150:  # Rango típico de un sensor industrial
+            raise serializers.ValidationError("Valor fuera de rango físico razonable (-50 a 150).")
+        return value
+
     def create(self, validated_data):
-        # Extraemos los datos de identificación que envió la Wemos
+        # 1. Extraemos los datos validados
         chip_id = validated_data.pop('chip_id')
-        sensor_nombre = validated_data.pop('sensor_nombre')
+        sensor_obj = validated_data.pop('sensor') 
 
-        # Buscamos el sensor exacto que pertenece a esa Wemos específica
-        try:
-            sensor = Sensor.objects.get(
-                nombre=sensor_nombre,
-                dispositivo__chip_id=chip_id
-            )
-        except Sensor.DoesNotExist:
-            raise serializers.ValidationError(
-                f"Error: No existe un sensor '{sensor_nombre}' para el dispositivo '{chip_id}'. "
-                "Regístralos primero en el panel de Admin."
-            )
+        # 2. Validación de Integridad de Hardware
+        # Verificamos que el chip_id reportado coincida con el dueño del sensor en BD
+        if sensor_obj.dispositivo.chip_id != chip_id:
+            raise serializers.ValidationError({
+                "hardware_mismatch": f"Seguridad: El sensor '{sensor_obj.slug}' no pertenece al hardware '{chip_id}'."
+            })
 
-        # Si todo está bien, creamos la lectura asociada a ese sensor
-        return Lectura.objects.create(sensor=sensor, **validated_data)
-    
-    
-# Ejemplo de JSON recibido por la Wemos
-# {
-#     "chip_id": "16777215",
-#     "sensor_nombre": "DHT11_Terraza",
-#     "tipo": "Temperatura",
-#     "valor": 24.8
-# }
+        # 3. Persistencia en PostgreSQL
+        return Lectura.objects.create(sensor=sensor_obj, **validated_data)
+
+class DispositivoConSensoresSerializer(serializers.ModelSerializer):
+    """Estructura anidada para el menú lateral del Dashboard"""
+    sensores = SensorSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Dispositivo
+        fields = ['id', 'nombre_placa', 'chip_id', 'sensores']
