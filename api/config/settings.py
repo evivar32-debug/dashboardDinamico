@@ -27,6 +27,7 @@ INSTALLED_APPS = [
     'corsheaders',  
     'rest_framework',
     'rest_framework_simplejwt', # Añadido explícitamente
+    'django_filters',
     
     # Apps Propias
     'sensores', 
@@ -95,6 +96,9 @@ CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS', 'http://localhost:8000'
 
 # Django REST Framework Configuration
 REST_FRAMEWORK = {
+    'DEFAULT_FILTER_BACKENDS': [
+        'django_filters.rest_framework.DjangoFilterBackend', # <--- Activa el motor de filtros
+    ],
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
         'rest_framework.authentication.SessionAuthentication', # Útil para el Browsable API

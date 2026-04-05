@@ -1,16 +1,33 @@
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: #eceff1;
+/**
+ * DASHBOARD IOT - SISTEMA DE MONITOREO INDUSTRIAL
+ * -----------------------------------------------
+ * Arquitectura de Diseño: Contenedores Flexibles con Scroll Desacoplado.
+ * Este diseño garantiza que la navegación lateral permanezca estática
+ * mientras el área de telemetría permite un scroll vertical fluido.
+ */
+
+/* --- 1. RESET Y ESTRUCTURA BASE --- */
+* {
+    box-sizing: border-box; /* El padding no altera las dimensiones calculadas */
     margin: 0;
-    display: flex;
-    height: 100vh;
-    overflow: hidden;
+    padding: 0;
 }
 
-/* Barra Lateral */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #eceff1; /* Gris azulado: Reduce fatiga visual en entornos de control */
+    margin: 0;
+    display: flex;       /* Sidebar y Main Content en paralelo */
+    height: 100vh;       /* Bloquea la altura a la ventana del navegador */
+    width: 100vw;
+    overflow: hidden;    /* Desactiva el scroll global para usar scroll interno */
+}
+
+/* --- 2. BARRA LATERAL (SIDEBAR) --- */
 .sidebar {
     width: 280px;
-    background: #263238;
+    min-width: 280px;    /* Previene deformación en resoluciones bajas */
+    background: #263238; /* Azul oscuro industrial (Slate) */
     color: #eceff1;
     display: flex;
     flex-direction: column;
@@ -28,13 +45,13 @@ body {
 .sidebar-header h3 {
     margin: 0;
     font-size: 1.2rem;
-    color: #81d4fa;
+    color: #81d4fa; /* Color de realce para identidad del sistema */
 }
 
 .menu-container {
-    flex-grow: 1;
+    flex-grow: 1;        /* Ocupa todo el espacio vertical disponible */
     padding: 15px 0;
-    overflow-y: auto;
+    overflow-y: auto;    /* Scroll interno si la lista de dispositivos es larga */
 }
 
 .dispositivo-group {
@@ -53,7 +70,7 @@ body {
 }
 
 .dispositivo-label::before {
-    content: "📟";
+    content: "📟"; /* Iconografía temática mediante Unicode */
     margin-right: 8px;
 }
 
@@ -74,39 +91,39 @@ body {
 .sensor-item.active {
     background: #37474f;
     color: #ffffff;
-    border-left: 4px solid #03a9f4;
+    border-left: 4px solid #03a9f4; /* Indicador de selección activa */
     font-weight: 600;
 }
 
-/* Contenido Principal */
+/* --- 3. CONTENIDO PRINCIPAL (GESTIÓN DE TELEMETRÍA) --- */
 .main-content {
-    flex-grow: 1;
+    flex-grow: 1;        /* Ocupa el resto del ancho de la pantalla */
+    height: 100vh;
     padding: 30px;
-    overflow-y: auto;
+    overflow-y: auto;    /* ACTIVA EL SCROLL VERTICAL AQUÍ */
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: center; /* Centra los bloques de datos horizontalmente */
+    scroll-behavior: smooth;
 }
 
-.chart-container {
+/**
+ * REGLA CRÍTICA DE INGENIERÍA:
+ * flex-shrink: 0 evita que los elementos se colapsen para "caber" en la pantalla.
+ * Esto obliga al navegador a generar el scroll vertical necesario.
+ */
+.header-info, .kpi-container, .chart-container, .table-container {
     width: 100%;
-    max-width: 1000px;
-    background: white;
-    padding: 25px;
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    max-width: 1000px;    /* Ancho de lectura óptimo */
+    flex-shrink: 0;       /* Protección contra colapso Flexbox */
 }
 
 .header-info {
-    width: 100%;
-    max-width: 1000px;
     margin-bottom: 20px;
+    text-align: left;
 }
 
-h2 {
-    color: #263238;
-    margin: 0;
-}
+h2 { color: #263238; margin: 0; }
 
 .status-badge {
     display: inline-block;
@@ -116,4 +133,112 @@ h2 {
     background: #e1f5fe;
     color: #0288d1;
     margin-top: 8px;
+}
+
+/* --- 4. INDICADORES KPI (TARJETAS) --- */
+.kpi-container {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.card {
+    flex: 1;
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    text-align: center;
+    border-top: 4px solid #03a9f4; /* Acento visual de categoría */
+}
+
+.card .label {
+    font-size: 0.8rem;
+    color: #546e7a;
+    text-transform: uppercase;
+}
+
+.card .value {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #263238;
+    margin-top: 5px;
+}
+
+/* --- 5. VISUALIZACIÓN GRÁFICA (SERIES DE TIEMPO) --- */
+.chart-container {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s ease;
+    min-height: 400px; /* Espacio reservado para renderizado de Chart.js */
+}
+
+.chart-container:hover {
+    transform: translateY(-5px); /* Efecto visual de elevación */
+}
+
+/* --- 6. TABLA DE REGISTROS (LOG DE EVENTOS) --- */
+.table-container {
+    background: white;
+    margin-top: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    overflow: hidden; /* Mantiene el contenido dentro de los bordes redondeados */
+    margin-bottom: 50px; /* Margen de seguridad para el final del scroll */
+}
+
+.table-header {
+    padding: 15px 25px;
+    background: #263238;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.table-header h3 { margin: 0; font-size: 1rem; }
+
+.badge-count {
+    background: #03a9f4;
+    padding: 2px 10px;
+    border-radius: 15px;
+    font-size: 0.75rem;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+th {
+    text-align: left;
+    padding: 12px 25px;
+    background: #f8f9fa;
+    color: #546e7a;
+    border-bottom: 2px solid #eceff1;
+}
+
+td {
+    padding: 12px 25px;
+    border-bottom: 1px solid #eceff1;
+    color: #263238;
+}
+
+tr:nth-child(even) { background: #fcfdfe; }
+tr:hover { background: #e1f5fe; transition: 0.2s; }
+
+/* --- 7. UTILIDADES DE ESTADO --- */
+.status-online { color: #4caf50; font-weight: bold; }
+.status-offline { color: #f44336; font-weight: bold; }
+
+.tag-success {
+    color: #4caf50;
+    font-weight: bold;
+    background: #e8f5e9;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.8rem;
 }

@@ -1,35 +1,84 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard IoT - Monitoreo Industrial</title>
+    
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
     <link rel="stylesheet" href="../style/menu.css">
 </head>
+
 <body>
-    <div class="sidebar">
+    <aside class="sidebar">
         <div class="sidebar-header">
             <h3>IoT Control Center</h3>
+            <small>Clasificación: Confidencial</small>
         </div>
-        <div class="menu-container" id="menuDispositivos">
-            <div style="padding: 20px; text-align: center; color: #546e7a;">
-                Cargando dispositivos...
+        
+        <nav class="menu-container" id="menuDispositivos">
+            <div class="loading-state">
+                <i class="fas fa-spinner fa-spin"></i> Cargando nodos de red...
             </div>
-        </div>
-    </div>
+        </nav>
+    </aside>
 
-    <div class="main-content">
-        <div class="header-info">
+    <main class="main-content">
+        
+        <header class="header-info">
             <h2 id="sensorTitulo">Seleccione un sensor</h2>
-            <div id="statusBadge" class="status-badge" style="display: none;">Monitoreo en vivo activo</div>
-        </div>
+            <div id="statusBadge" class="status-badge" style="display: none;">
+                <i class="fas fa-satellite-dish"></i> Monitoreo en vivo activo
+            </div>
+        </header>
 
-        <div class="chart-container">
+        <section class="kpi-container">
+            <article class="card">
+                <span class="label">Última Lectura</span>
+                <div id="lastValue" class="value">--</div>
+            </article>
+            
+            <article class="card">
+                <span class="label">Máximo (Sesión)</span>
+                <div id="maxValue" class="value">--</div>
+            </article>
+            
+            <article class="card">
+                <span class="label">Estado del Sensor</span>
+                <div id="statusIndicator" class="status-online">En Línea</div>
+            </article>
+        </section>
+
+        <section class="chart-container">
             <canvas id="iotChart"></canvas>
-        </div>
-    </div>
+        </section>
+
+        <section class="table-container">
+            <header class="table-header">
+                <h3><i class="fas fa-list-ul"></i> Historial Reciente (Log de Eventos)</h3>
+                <span class="badge-count">Últimos 10 registros</span>
+            </header>
+            
+            <table id="logTable">
+                <thead>
+                    <tr>
+                        <th>Fecha / Hora</th>
+                        <th>Magnitud</th>
+                        <th>Valor</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody id="logTableBody">
+                    </tbody>
+            </table>
+        </section>
+
+    </main>
 
     <script src="../js/menu.js" defer></script>
 </body>
+
 </html>

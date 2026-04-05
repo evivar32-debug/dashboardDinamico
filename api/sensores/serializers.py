@@ -2,25 +2,45 @@ from rest_framework import serializers
 from .models import Dispositivo, Sensor, Lectura
 
 class DispositivoSerializer(serializers.ModelSerializer):
-    """Serializer básico para ABM de dispositivos"""
+    """
+    Serializer básico para operaciones CRUD de Dispositivos.
+    
+    Uso: Registro de nuevo hardware (Wemos D1/ESP32) en el sistema.
+    """
     class Meta:
         model = Dispositivo
         fields = '__all__'
 
+
 class SensorSerializer(serializers.ModelSerializer):
-    """Serializer para sensores, incluyendo el nombre de la placa dueña"""
+    """
+    Serializer de Instrumentación.
+    
+    Provee metadatos del sensor y campos de solo lectura para identificar 
+    el hardware al que está conectado (nombre de placa y chip_id).
+    """
     dispositivo_nombre = serializers.ReadOnlyField(source='dispositivo.nombre_placa')
     dispositivo_chip = serializers.ReadOnlyField(source='dispositivo.chip_id')
 
     class Meta:
         model = Sensor
-        fields = ['id', 'nombre', 'slug', 'tipo', 'pin_conexion', 'dispositivo_nombre', 'dispositivo_chip']
+        fields = [
+            'id', 'nombre', 'slug', 'tipo', 
+            'pin_conexion', 'dispositivo_nombre', 'dispositivo_chip'
+        ]
+
 
 class LecturaSerializer(serializers.ModelSerializer):
-    """Serializer para la ingesta de telemetría desde hardware (Wemos/ESP32)"""
+    """
+    Motor de Ingesta de Telemetría con Validación de Integridad.
+    
+    Este serializador procesa los POST de los microcontroladores. 
+    Incluye lógica de validación para asegurar que el hardware que reporta 
+    sea efectivamente el dueño del sensor en la base de datos.
+    """
     chip_id = serializers.CharField(write_only=True)
     
-    # Vinculamos el slug del JSON directamente con la instancia del modelo Sensor
+    # Vinculación por SLUG: El hardware envía un texto, DRF busca el objeto Sensor
     sensor_slug = serializers.SlugRelatedField(
         queryset=Sensor.objects.select_related('dispositivo').all(),
         slug_field='slug',
@@ -33,28 +53,46 @@ class LecturaSerializer(serializers.ModelSerializer):
         read_only_fields = ['timestamp']
 
     def validate_valor(self, value):
-        """Ejemplo de validación de ingeniería: Evitar ruidos o valores fuera de rango"""
-        if value < -50 or value > 150:  # Rango típico de un sensor industrial
-            raise serializers.ValidationError("Valor fuera de rango físico razonable (-50 a 150).")
+        """
+        Filtro de Rango Físico.
+        Evita el registro de ruidos eléctricos o valores fuera de escala 
+        industrial razonable (-50°C a 150°C).
+        """
+        if value < -50 or value > 150:
+            raise serializers.ValidationError(
+                "Valor fuera de rango físico razonable (-50 a 150)."
+            )
         return value
 
     def create(self, validated_data):
-        # 1. Extraemos los datos validados
+        """
+        Lógica de Persistencia con Check de Seguridad.
+        """
+        # 1. Extracción de datos validados
         chip_id = validated_data.pop('chip_id')
         sensor_obj = validated_data.pop('sensor') 
 
-        # 2. Validación de Integridad de Hardware
-        # Verificamos que el chip_id reportado coincida con el dueño del sensor en BD
+        # 2. Validación de Integridad de Hardware (Cross-check)
+        # Previene que un dispositivo reporte datos de un sensor que no tiene conectado
         if sensor_obj.dispositivo.chip_id != chip_id:
             raise serializers.ValidationError({
-                "hardware_mismatch": f"Seguridad: El sensor '{sensor_obj.slug}' no pertenece al hardware '{chip_id}'."
+                "hardware_mismatch": (
+                    f"Seguridad: El sensor '{sensor_obj.slug}' "
+                    f"no pertenece al hardware con ID '{chip_id}'."
+                )
             })
 
-        # 3. Persistencia en PostgreSQL
+        # 3. Escritura final en PostgreSQL
         return Lectura.objects.create(sensor=sensor_obj, **validated_data)
 
+
 class DispositivoConSensoresSerializer(serializers.ModelSerializer):
-    """Estructura anidada para el menú lateral del Dashboard"""
+    """
+    Estructura Jerárquica para la Interfaz de Usuario (Dashboard).
+    
+    Mapea la relación Dispositivo -> [Lista de Sensores] para construir 
+    el menú de navegación dinámica en el frontend.
+    """
     sensores = SensorSerializer(many=True, read_only=True)
 
     class Meta:
