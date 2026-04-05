@@ -52,19 +52,25 @@ El sistema sigue un modelo de comunicación desacoplado:
 
 
 
-1. **Clonar el repositorio:** \
-git clone https://github.com/evivar32-debug/dashboardDinamico.git \
-cd dashboardDinamico \
+1. **Clonar el repositorio:** 
+```bash
+git clone https://github.com/evivar32-debug/dashboardDinamico.git 
+cd dashboardDinamico 
+```
+2. **Configurar el entorno virtual:**
+```bash
+docker compose up -–build
+```
 
-2. **Configurar el entorno virtual:** \
-docker compose up -–build \
+3. **Ejecutar Migraciones:**
+```bash
+docker compose python manage.py makemigration 
+docker compose python manage.py migrate
+```
 
-3. **Ejecutar Migraciones:** \
-docker compose python manage.py makemigration \
-docker compose python manage.py migrate \
+4. **Levantar Frontend:**
 
-4. **Levantar Frontend: \
-**-Usar extensión ‘live server’ de Visual Studio Code (ya configurado) o usar otra herramienta de preferencia (se debe configurar archivos de Django correspondientes de puertos a usar) \
+* Usar extensión ‘live server’ de Visual Studio Code (ya configurado) o usar otra herramienta de preferencia (se debe configurar archivos de Django correspondientes de puertos a usar) 
 
 
 
@@ -79,4 +85,4 @@ docker compose python manage.py migrate \
 
 
 ---
-**Desarrollado por:** Elvis Vivar - *Ingeniero Electrónico* 🇨🇱
+**Desarrollado por:** Elvis Vivar - *Ingeniero Electrónico* 
