@@ -26,7 +26,7 @@ INSTALLED_APPS = [
     # Librerías Externas
     'corsheaders',  
     'rest_framework',
-    'rest_framework_simplejwt', # Añadido explícitamente
+    'rest_framework_simplejwt', 
     'django_filters',
     
     # Apps Propias
@@ -50,7 +50,7 @@ ROOT_URLCONF = 'config.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'], # Recomendado para tu index.html
+        'DIRS': [BASE_DIR / 'templates'], 
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -91,7 +91,7 @@ AUTH_USER_MODEL = 'usuarios.Usuario'
 
 # Configuración de CORS
 CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS', 'http://localhost:8000').split(',')
-# Durante desarrollo en CachyOS, puedes descomentar la siguiente si tienes problemas:
+# Si deseas permitir todos los orígenes, descomenta la siguiente línea
 # CORS_ALLOW_ALL_ORIGINS = True 
 
 # Django REST Framework Configuration
