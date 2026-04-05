@@ -247,3 +247,29 @@ tr:hover { background: #e1f5fe; transition: 0.2s; }
     border-radius: 4px;
     font-size: 0.8rem;
 }
+
+/* --- 8. BOTON DE CERRAR SESIÓN --- */
+ .user-control-panel {
+     padding: 15px;
+     border-top: 1px solid #37474f;
+     margin-top: auto;
+     /* Empuja el botón al fondo si es flex */
+ }
+
+ .btn-logout {
+     background: transparent;
+     color: #ef5350;
+     border: 1px solid #ef5350;
+     padding: 8px 15px;
+     border-radius: 4px;
+     cursor: pointer;
+     width: 100%;
+     font-weight: bold;
+     transition: all 0.3s;
+     margin-top: 10px;
+ }
+
+ .btn-logout:hover {
+     background: #ef5350;
+     color: white;
+ }

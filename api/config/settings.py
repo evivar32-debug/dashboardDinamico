@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 from dotenv import load_dotenv
+from datetime import timedelta
 
 load_dotenv()
 
@@ -108,4 +109,13 @@ REST_FRAMEWORK = {
         # sin tokens complejos inicialmente. Luego puedes usar IsAuthenticatedOrReadOnly.
         'rest_framework.permissions.AllowAny', 
     ]
+}
+
+# Configuración de JWT
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60), # Tiempo de sesión activa
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),    # Tiempo para renovar sin login
+    'ROTATE_REFRESH_TOKENS': True,
+    'ALGORITHM': 'HS256',
+    'AUTH_HEADER_TYPES': ('Bearer',),               # Prefijo en el Header HTTP
 }

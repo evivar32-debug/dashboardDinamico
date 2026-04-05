@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import Dispositivo, Sensor, Lectura
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 class DispositivoSerializer(serializers.ModelSerializer):
     """
@@ -98,3 +99,18 @@ class DispositivoConSensoresSerializer(serializers.ModelSerializer):
     class Meta:
         model = Dispositivo
         fields = ['id', 'nombre_placa', 'chip_id', 'sensores']
+        
+
+class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+
+        # Campos personalizados del modelo 'Usuario'
+        token['email'] = user.email
+        token['nombre'] = user.nombre_completo
+        token['rut'] = user.rut
+        token['cargo'] = user.cargo
+        token['es_admin'] = user.es_admin # Tu booleano personalizado
+        
+        return token
