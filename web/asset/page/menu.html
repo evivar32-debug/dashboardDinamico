@@ -5,20 +5,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard IoT - Monitoreo Industrial</title>
-    
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    
+
     <link rel="stylesheet" href="../style/menu.css">
 </head>
 
 <body>
     <aside class="sidebar">
         <div class="sidebar-header">
-            <h3>IoT Control Center</h3>
+            <h3><i class="fas fa-microchip"></i> IoT Control Center</h3>
             <small>Clasificación: Confidencial</small>
         </div>
-        
+
+        <div id="displayUserName" class="user-control-panel">
+        </div>
+
+        <div class="admin-controls" style="padding: 10px 20px;">
+        </div>
+
         <nav class="menu-container" id="menuDispositivos">
             <div class="loading-state">
                 <i class="fas fa-spinner fa-spin"></i> Cargando nodos de red...
@@ -26,19 +32,14 @@
         </nav>
 
         <div class="user-control-panel">
-    <span id="displayUserName" style="color: #90a4ae; font-size: 0.8rem;"></span>
-    <button id="btnLogout" class="btn-logout">
-        <i class="fas fa-sign-out-alt"></i> CERRAR SESIÓN
-    </button>
-</div>
-
-<style>
-   
-</style>
+            <button id="btnLogout" class="btn-logout">
+                <i class="fas fa-sign-out-alt"></i> CERRAR SESIÓN
+            </button>
+        </div>
     </aside>
 
     <main class="main-content">
-        
+
         <header class="header-info">
             <h2 id="sensorTitulo">Seleccione un sensor</h2>
             <div id="statusBadge" class="status-badge" style="display: none;">
@@ -51,12 +52,12 @@
                 <span class="label">Última Lectura</span>
                 <div id="lastValue" class="value">--</div>
             </article>
-            
+
             <article class="card">
                 <span class="label">Máximo (Sesión)</span>
                 <div id="maxValue" class="value">--</div>
             </article>
-            
+
             <article class="card">
                 <span class="label">Estado del Sensor</span>
                 <div id="statusIndicator" class="status-online">En Línea</div>
@@ -69,10 +70,10 @@
 
         <section class="table-container">
             <header class="table-header">
-                <h3><i class="fas fa-list-ul"></i> Historial Reciente (Log de Eventos)</h3>
+                <h3><i class="fas fa-list-ul"></i> Historial Reciente</h3>
                 <span class="badge-count">Últimos 10 registros</span>
             </header>
-            
+
             <table id="logTable">
                 <thead>
                     <tr>
@@ -83,11 +84,48 @@
                     </tr>
                 </thead>
                 <tbody id="logTableBody">
-                    </tbody>
+                </tbody>
             </table>
         </section>
-
     </main>
+
+    <div id="modalSensor" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-plus-circle"></i> Nuevo Sensor</h3>
+                <button onclick="cerrarModal()" class="btn-close">&times;</button>
+            </div>
+            <form id="formNuevoSensor">
+                <div class="form-group">
+                    <label>Dispositivo Maestro (Placa)</label>
+                    <select id="selectDispositivo" required></select>
+                </div>
+                <div class="form-group">
+                    <label>Nombre del Punto de Medida</label>
+                    <input type="text" id="nombreSensor" placeholder="Ej: Flujo Entrada" required>
+                </div>
+                <div class="form-group">
+                    <label>Slug Técnico (URL ID)</label>
+                    <input type="text" id="slugSensor" placeholder="Ej: flujo_ent" required>
+                    <small style="color: #90a4ae; font-size: 0.7rem;">Solo minúsculas, números y guiones bajos.</small>
+                </div>
+                <div class="form-group" style="display: flex; gap: 15px;">
+                    <div style="flex: 1;">
+                        <label>PIN GPIO (Físico)</label>
+                        <input type="number" id="pinConexion" placeholder="Ej: 14" required>
+                    </div>
+                    <div style="flex: 1;">
+                        <label>Modelo / Tipo</label>
+                        <input type="text" id="tipoSensor" placeholder="Ej: DHT22, PT100" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" onclick="cerrarModal()" class="btn-secondary">CANCELAR</button>
+                    <button type="submit" class="btn-primary">REGISTRAR INSTRUMENTO</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <script src="../js/menu.js" defer></script>
 </body>

@@ -1,4 +1,4 @@
-from rest_framework import generics, permissions
+from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
 from .models import Lectura, Sensor, Dispositivo
@@ -49,26 +49,29 @@ class LecturaListCreateView(generics.ListCreateAPIView):
         return Response(serializer.data)
 
 
-class SensorListView(generics.ListAPIView):
+class SensorListView(generics.ListCreateAPIView): # <--- CAMBIO: De ListAPIView a ListCreateAPIView
     """
     Catálogo técnico de sensores.
     
-    Uso: Provee metadatos como pines de conexión y tipos de sensores.
-    Optimización: select_related('dispositivo') para traer el nombre del hardware dueño.
+    Permite:
+    - GET: Listar todos los sensores registrados.
+    - POST: Registrar un nuevo sensor (usado por el Modal del Dashboard).
     """
     queryset = Sensor.objects.select_related('dispositivo').all()
     serializer_class = SensorSerializer
-    permission_classes = [permissions.AllowAny]
+    # Cambiamos a IsAuthenticated para que solo usuarios logueados registren hardware
+    permission_classes = [permissions.IsAuthenticated] 
 
+    def perform_create(self, serializer):
+        # Aquí DRF ejecutará la validación del slug y el pin_conexion
+        # definidos en tu modelo Sensor automáticamente.
+        serializer.save()
 
 class DispositivoListView(generics.ListAPIView):
     """
     Genera la estructura jerárquica para el menú de navegación (Dashboard).
-    
-    Uso: Retorna Dispositivos con sus Sensores anidados.
-    Optimización: prefetch_related('sensores') para cargar todas las relaciones 
-    inversas en una sola consulta adicional (Reverse Foreign Key).
     """
     queryset = Dispositivo.objects.prefetch_related('sensores').all()
+    # Asegúrate de que este serializador incluya el campo 'id' y 'nombre_placa'
     serializer_class = DispositivoConSensoresSerializer
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [permissions.IsAuthenticated]

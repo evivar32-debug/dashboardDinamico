@@ -21,4 +21,7 @@ urlpatterns = [
     # Estructura jerárquica para construir el menú lateral del Dashboard
     # GET: http://localhost:8000/api/sensores/menu/',
     path('menu/', DispositivoListView.as_view(), name='dispositivos-menu'),
+    
+    # Nueva ruta para el POST (Creación) y GET (Listado simple)
+    path('', SensorListView.as_view(), name='sensor-list-create'),
 ]

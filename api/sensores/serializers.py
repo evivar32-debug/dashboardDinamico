@@ -17,18 +17,30 @@ class SensorSerializer(serializers.ModelSerializer):
     """
     Serializer de Instrumentación.
     
-    Provee metadatos del sensor y campos de solo lectura para identificar 
-    el hardware al que está conectado (nombre de placa y chip_id).
+    Permite la creación de sensores vinculándolos a un dispositivo mediante su ID,
+    y provee metadatos adicionales de solo lectura para el Dashboard.
     """
+    # Estos campos son para lectura (GET), no afectan la creación (POST)
     dispositivo_nombre = serializers.ReadOnlyField(source='dispositivo.nombre_placa')
     dispositivo_chip = serializers.ReadOnlyField(source='dispositivo.chip_id')
 
     class Meta:
         model = Sensor
         fields = [
-            'id', 'nombre', 'slug', 'tipo', 
-            'pin_conexion', 'dispositivo_nombre', 'dispositivo_chip'
+            'id', 
+            'dispositivo',       # <--- CRÍTICO: Debe estar aquí para poder hacer el POST
+            'nombre', 
+            'slug', 
+            'tipo', 
+            'pin_conexion', 
+            'dispositivo_nombre', 
+            'dispositivo_chip'
         ]
+        # Opcional: Puedes marcar los campos de solo lectura explícitamente si prefieres
+        extra_kwargs = {
+            'dispositivo_nombre': {'read_only': True},
+            'dispositivo_chip': {'read_only': True}
+        }
 
 
 class LecturaSerializer(serializers.ModelSerializer):
