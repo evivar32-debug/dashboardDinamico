@@ -39,7 +39,7 @@ load_dotenv(dotenv_path=env_path)
 
 # --- CONFIGURACIÓN TÉCNICA ---
 API_URL = os.getenv('API_URL', "http://localhost:8000/api/sensores/lecturas/")
-CHIP_ID = os.getenv('CHIP_ID', "16777215")
+CHIP_ID = "16777215"
 SENSOR_SLUG = "temperatura_cocina"  # Asegúrate que coincida con el Admin de Django
 
 # Parámetros de la Señal (Simulación Física)
