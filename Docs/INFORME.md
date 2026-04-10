@@ -1,7 +1,6 @@
 # 🚀 Sistema de Gestión y Monitoreo IoT Industrial
 
 ## **Introducción**
----
 
 
 ### Resumen del Proyecto y Aplicación Laboral
@@ -91,7 +90,6 @@ docker compose exec api python manage.py migrate
 ```
 
 ## **Funcionamiento del proyecto**
----
 
 Para demostrar el funcionamiento del proyecto se realizara una demostración de una lectura simulada de temperatura, el enfoque sera de tipo industrial.
 
@@ -185,8 +183,6 @@ El script en Python utiliza una función seno combinada con ruido aleatorio (`ra
 
 ## **Gestión de Usuarios y Control de Acceso (RBAC)**
 
----
-
 El sistema implementa un modelo de **Control de Acceso Basado en Roles (RBAC)**, lo que permite segregar funciones y minimizar riesgos operativos mediante la jerarquía de privilegios:
 
 - **Perfil Operador:** Diseñado para personal de planta o monitoreo. Su alcance se limita a la **visualización de datos en tiempo real** y consulta de históricos. No posee acceso a la API de configuración ni al panel administrativo, garantizando que la configuración del hardware permanezca inalterada.
@@ -211,8 +207,6 @@ Ejemplo usuario nivel Administrador:
 > [!IMPORTANT] **Integridad del Sistema:** En la interfaz web, el sistema valida el token de autenticación y renderiza dinámicamente una **insignia de rango**. Esto no es solo un cambio estético; el Backend rechaza cualquier petición de modificación de datos (POST/PUT/DELETE) si el token no pertenece a un perfil con los permisos adecuados.
 
 ## **🛠️ Solución de Problemas Comunes (Troubleshooting)**
-
----
 
 
 #### 1. Errores de Permisos en Docker (Linux)
@@ -249,8 +243,6 @@ docker compose up --build
 (El flag `-v` elimina los volúmenes de datos, permitiendo una instalación limpia).
 
 ## **Conclusiones y Proyección Técnica**
-
----
 
 El desarrollo de este ecosistema de monitoreo industrial ha permitido validar la viabilidad de integrar tecnologías de **Desarrollo Fullstack** con la **Automatización Industrial**. El uso de un Backend robusto en **Django** y **PostgreSQL**, comunicado con un Frontend dinámico, ofrece una solución superior a los SCADAs tradicionales en términos de flexibilidad, seguridad y costos de licenciamiento.
 
