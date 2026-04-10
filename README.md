@@ -1,88 +1,139 @@
+
 # 🚀 IoT Control Center - Monitoreo Industrial en Tiempo Real
 
-Sistema integral de telemetría diseñado para la visualización y registro de variables críticas de sensores conectados a microcontroladores (ESP32/Wemos D1). El proyecto combina la potencia de **Django** en el backend con una interfaz dinámica en **JavaScript** y **Chart.js**.
+Sistema integral de telemetría diseñado para la visualización y registro de variables críticas en entornos industriales. Este ecosistema permite la transición hacia la **Minería 4.0**, integrando datos de campo desde microcontroladores (ESP32/PLC) hacia una plataforma analítica robusta.
 
 
-## 🛠️ Arquitectura del Sistema
-
-El sistema sigue un modelo de comunicación desacoplado:
+## 
 
 
+🛠️ Arquitectura del Sistema (IT/OT Convergence)
 
-1. **Capa de Hardware:** Sensores conectados a microcontroladores que envían datos vía HTTP/REST o Modbus.
-2. **Capa de Datos (API):** Backend en **Python/Django** con **Django REST Framework (DRF)** y base de datos SQL (**PostgreSQL**).
-3. **Capa de Presentación:** Dashboard interactivo construido con HTML5 semántico, CSS3 (Flexbox) y JS Vanilla.
-
-
-## 📋 Características Principales
+El proyecto utiliza un modelo de comunicación desacoplado y escalable:
 
 
 
-* **Dashboard Dinámico:** Visualización de series de tiempo mediante **Chart.js** con suavizado de curva (Bézier).
-* **KPIs en Tiempo Real:** Cálculo instantáneo de valores máximos y última lectura por sesión.
-* **Gestión de Dispositivos:** Navegación jerárquica por Placas y Sensores vinculados.
-* **Log de Eventos:** Historial de las últimas 10 lecturas con estados de recepción.
-* **Diseño Industrial:** Interfaz optimizada para centros de control (Low-fatigue UI) con scroll independiente.
-* **Contenerización:** Preparado para despliegue con **Docker** y **Docker Compose**.
+1. **Capa de Hardware:** Captura de datos mediante sensores analógicos/digitales y transmisión vía HTTP/REST.
+2. **Capa de Servicio (Backend):** API REST construida con **Python/Django** y **DRF**, gestionando la persistencia en **PostgreSQL**.
+3. **Capa de Presentación (Frontend):** Dashboard SPA (Single Page Application) dinámico con **Chart.js** y **Vanilla JS**.
 
 
-## 🚀 Tecnologías Utilizadas
+## 
+
+
+📋 Características Principales
 
 
 
-* **Backend:** Python 3.x, Django 5.x, Django REST Framework.
-* **Frontend:** JavaScript (ES6+), CSS3 (Custom Properties & Flexbox), HTML5.
-* **Base de Datos:** PostgreSQL.
-* **DevOps:** Docker, CachyOS (Linux), Fish Shell.
-* **Herramientas de Desarrollo:** Micro Editor, Visual Studio Code, Git.
+* **Seguridad RBAC:** Control de acceso basado en roles (Administrador vs. Operador) con validación mediante **JWT**.
+* **Visualización Predictiva:** Gráficos de series de tiempo con suavizado de curva (Bézier) y manejo de ruido estocástico.
+* **KPIs Industriales:** Cálculo en tiempo real de valores máximos, mínimos y promedios por sesión.
+* **Gestión de Activos:** Interfaz administrativa para el alta/baja de sensores y dispositivos de campo.
+* **Contenerización:** Despliegue agnóstico al SO mediante **Docker Compose**, optimizado para entornos Linux (**CachyOS**).
 
 
-## 🔧 Instalación y Configuración
+## 
+
+🔧 Instalación y Despliegue Rápido
 
 
 ### Requisitos Previos
 
 
 
-* Python 3.10+
-* Docker & Docker Compose (opcional para contenedores)
+* Docker & Docker Compose (Recomendado)
+* Python 3.10+ (Para ejecución local del simulador)
 
 
-### Pasos de Instalación
+### Pasos para el despliegue del Stack
 
 
 
-1. **Clonar el repositorio:** 
-```bash
-git clone https://github.com/evivar32-debug/dashboardDinamico.git 
+1. **Clonar y configurar:** 
+```Bash 
+git clone https://github.com/evivar32-debug/dashboardDinamico.git  
 cd dashboardDinamico 
+# Configura tu .env basado en el .env.example 
 ```
-2. **Configurar el entorno virtual:**
+2. **Levantar infraestructura:** 
+```Bash 
+docker compose up --build -d 
+```
+3. **Inicializar Base de Datos:** 
+```Bash 
+# Ejecutar migraciones 
+docker compose exec api python manage.py migrate 
+ ```
+# Crear cuenta administrativa 
 ```bash
-docker compose up -–build
+docker compose exec api python manage.py createsuperuser 
+```
+4. **Simular Datos (Opcional):** 
+Para probar el sistema sin hardware físico, ejecuta el simulador incluido: 
+```Bash 
+python tools/sensor_simulador.py
 ```
 
-3. **Ejecutar Migraciones:**
-```bash
-docker compose python manage.py makemigration 
-docker compose python manage.py migrate
-```
 
-4. **Levantar Frontend:**
 
-* Usar extensión ‘live server’ de Visual Studio Code (ya configurado) o usar otra herramienta de preferencia (se debe configurar archivos de Django correspondientes de puertos a usar) 
+## 
+
+
+🛡️ Prácticas de Ingeniería y Performance
 
 
 
-## 🛡️ Prácticas de Ingeniería Aplicadas
+* **Robustez de Datos:** Implementación de modelos personalizados en Django para el manejo de **RUT** e identificadores de hardware únicos (**Chip ID**).
+* **Memory Management:** Optimización del ciclo de vida de los objetos en el Frontend para prevenir fugas de memoria en monitoreo 24/7.
+* **Diseño Low-Fatigue:** Interfaz de usuario de alto contraste y baja fatiga visual, diseñada para centros de control operativos.
+
+
+## 
+
+
+🛠️ Stack Tecnológico
+
+
+<table>
+  <tr>
+   <td><strong>Backend</strong>
+   </td>
+   <td><strong>Frontend</strong>
+   </td>
+   <td><strong>DevOps & Herramientas</strong>
+   </td>
+  </tr>
+  <tr>
+   <td>Python / Django
+   </td>
+   <td>JavaScript (ES6+)
+   </td>
+   <td>Docker / Docker Compose
+   </td>
+  </tr>
+  <tr>
+   <td>Django REST Framework
+   </td>
+   <td>Chart.js
+   </td>
+   <td>PostgreSQL
+   </td>
+  </tr>
+  <tr>
+   <td>JWT Authentication
+   </td>
+   <td>CSS3 (Custom Vars)
+   </td>
+   <td>Linux (CachyOS) / Fish Shell
+   </td>
+  </tr>
+</table>
 
 
 
-* **Zero-Footprint Styling:** Uso de flex-shrink: 0 para prevenir colapso de componentes en visualizaciones críticas.
-* **Async/Await Flow:** Manejo asíncrono de peticiones para evitar bloqueos en el hilo principal del navegador.
-* **Memory Management:** Optimización del ciclo de vida del gráfico para prevenir fugas de memoria en monitoreo 24/7.
+### 
 
 
+👤 Autor
 
----
-**Desarrollado por:** Elvis Vivar - *Ingeniero Electrónico* 
+**Elvis Vivar** - *Ingeniero Electrónico*
