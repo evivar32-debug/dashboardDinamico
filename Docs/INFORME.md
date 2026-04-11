@@ -117,31 +117,31 @@ Una vez realizado se mostrara en la terminal : `Superuser created successfully.`
 ### 2. Crear dispositivo y sensor
 Una vez realizado nuestro SuperUsuario, debemos dirigirnos a nuestro navegador con la dirección [http://localhost:8000/admin](http://localhost:8000/admin).
 
-![[Pasted image 20260409182736.png]]
+![login_django](/Docs/img/login_django.png)
 
 Una vez dentro, debemos ingresar con los datos de Correo electrónico y Contraseña escritas anteriormente. Al loguearnos nos encontraremos con el panel principal.
 
-![[Pasted image 20260409183918.png]]
+![menu_django](/Docs/img/menu_django.png)
 
 Creamos un nuevo Dispositivo haciendo click en Añadir, se creara un dispositivo con las siguientes denominaciones:
 
-![[Pasted image 20260409185037.png]]
+![add_disp](/Docs/img/add_disp.png)
 
 Nos dirigimos a Añadir Sensor desde el menú lateral, al crear un sensor elegimos un dispositivo desde el menú despegable (estará listado nuestro dispositivo recién hecho)
 y completar los campos restantes según nuestros requisitos.
 
-![[Pasted image 20260409190225.png]]
+![add_sensor](/Docs/img/add_sensor.png)
 
 Habiendo realizado esto, ya tendremos incorporado un sensor a nuestro proyecto el cual se podrá visualizar en nuestra pagina Web.
 
 ### 3. Simulación y visualización de datos
 Para visualizar nuestro proyecto en el navegador, se debe levantar nuestro Frontend, se utilizara la extensión de [Live Server](https://github.com/ritwickdey/vscode-live-server-plus-plus) de Visual Studio Code para esta demostracion, una vez levantado el Frontend, nos dirigiremos a [http://127.0.0.1:5500/web/index.html](http://127.0.0.1:5500/web/index.html).
 
-![[Pasted image 20260409192841.png]]
+![login_web](/Docs/img/login_web.png)
 
 Ingresaremos con la cuenta hecha previamente, al ingresar podremos ver nuestro sensor creado:
 
-![[Pasted image 20260409193125.png]]
+![menu_web](/Docs/img/menu_web.png)
 
 Como esta recién creado y no esta conectado a nada todavía, tendremos una lista vacía, por lo que simularemos valores gracias al programa incorporado en el proyecto en la carpeta **tools**, para usarlo se debe configurar los valores de `CHIP_ID` y `SENSOR_SLUG` segun lo que definimos anteriormente, en nuestro caso quedara:
 ```python
@@ -175,7 +175,7 @@ El programa nos comenzara a crear lecturas del sensor creado, se debe visualizar
 ```
 Al ir a nuestra pagina web, veremos que los datos se empiezan a visualizar:
 
-![[Pasted image 20260409195552.png]]
+![menu_datos](/Docs/img/menu_datos.png)
 
 > [!TIP] **Sobre el Simulador:** 
 El script en Python utiliza una función seno combinada con ruido aleatorio (`random`) para emular el comportamiento térmico real de una sala eléctrica, donde la temperatura oscila suavemente pero presenta pequeñas variaciones por interferencias o flujo de aire.
@@ -193,16 +193,16 @@ El sistema implementa un modelo de **Control de Acceso Basado en Roles (RBAC)**,
 ### Crear nueva cuenta
 Para crear una nueva cuenta, se debe dirigir al login de [Admin](http://localhost:8000/admin/) de Django, iniciar sesión con una cuenta de administrador (debe ser un SuperUsuario o con privilegios de Staff) y hacer click en añadir Usuario:
 
-![[Pasted image 20260409203020.png]]
+![add_usuario](/Docs/img/add_usuario.png)
 
 Completamos con los datos solicitados y damos los privilegios que tendrá el nuevo usuario, el campo '**Es staff**' es necesario si se quiere que la cuenta nueva tenga acceso al administrador de Django.
 Una vez registrado ya se puede usar esta cuenta en la pagina web, para diferenciar entre un Operador y un Administrador, en la pagina web se mostrara una insignia con el nivel de privilegios correspondiente.
 
 Ejemplo usuario nivel Operador:
-![[Pasted image 20260409204345.png]]
+![badge_operador](/Docs/img/badge_operador.png)
 
 Ejemplo usuario nivel Administrador:
-![[Pasted image 20260409204443.png]]
+![badge_admin](/Docs/img/badge_admin.png)
 
 > [!IMPORTANT] **Integridad del Sistema:** En la interfaz web, el sistema valida el token de autenticación y renderiza dinámicamente una **insignia de rango**. Esto no es solo un cambio estético; el Backend rechaza cualquier petición de modificación de datos (POST/PUT/DELETE) si el token no pertenece a un perfil con los permisos adecuados.
 
