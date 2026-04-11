@@ -64,11 +64,11 @@ docker compose up --build -d
 # Ejecutar migraciones 
 docker compose exec api python manage.py migrate 
  ```
-# Crear cuenta administrativa 
+4. **Crear cuenta administrativa** 
 ```bash
 docker compose exec api python manage.py createsuperuser 
 ```
-4. **Simular Datos (Opcional):** 
+5. **Simular Datos (Opcional):** 
 Para probar el sistema sin hardware físico, ejecuta el simulador incluido: 
 ```Bash 
 python tools/sensor_simulador.py
