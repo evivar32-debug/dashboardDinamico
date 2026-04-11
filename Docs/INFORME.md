@@ -33,7 +33,6 @@ En términos de integración, el enfoque de **API REST** permite que estos datos
 
 ## **Instalación y Configuración del Entorno**
 
----
 
 
 Para asegurar la replicabilidad del sistema en cualquier entorno (Windows, Linux o macOS), se ha contenedorizado la aplicación completa.
@@ -93,7 +92,7 @@ docker compose exec api python manage.py migrate
 
 Para demostrar el funcionamiento del proyecto se realizara una demostración de una lectura simulada de temperatura, el enfoque sera de tipo industrial.
 
-> [!NOTA]
+>[!NOTE]
 > En caso de presentar problemas al hacer los siguientes pasos, se recomienda realizar un reset del contenedor de Docker con: `docker compose down` y `docker compose up`
 
 ### 1. Crear SuperUsuario
@@ -110,7 +109,7 @@ Se preguntara por los siguientes datos:
 Una vez realizado se mostrara en la terminal : `Superuser created successfully.`
 
 
-> [!NOTA] 
+>[!NOTE] 
 > La primera vez se debe realizar de esta manera, mas adelante si se desea crear otro usuario o SuperUsuario, se puede realizar directamente desde el administrador de Django.
 
 
@@ -152,7 +151,8 @@ CHIP_ID = "16777215" # ID único del hardware (ej. Dirección MAC)
 SENSOR_SLUG = "temperatura-sala"
 ```
 
-> [!Instalar dependencias de ser necesario:]
+> [!NOTE]
+> Instalar dependencias de ser necesario:
 > 1. requests:  Manejo de protocolos HTTP (POST/GET).
 >               Instalación: `pip install requests`
 > 2. python-dotenv: Gestión de variables de entorno (.env).
@@ -177,8 +177,9 @@ Al ir a nuestra pagina web, veremos que los datos se empiezan a visualizar:
 
 ![menu_datos](/Docs/img/menu_datos.png)
 
-> [!TIP] **Sobre el Simulador:** 
-El script en Python utiliza una función seno combinada con ruido aleatorio (`random`) para emular el comportamiento térmico real de una sala eléctrica, donde la temperatura oscila suavemente pero presenta pequeñas variaciones por interferencias o flujo de aire.
+>[!TIP]
+> **Sobre el Simulador:** 
+>El script en Python utiliza una función seno combinada con ruido aleatorio (`random`) para emular el comportamiento térmico real de una sala eléctrica, donde la temperatura oscila suavemente pero presenta pequeñas variaciones por interferencias o flujo de aire.
 
 
 ## **Gestión de Usuarios y Control de Acceso (RBAC)**
@@ -199,12 +200,15 @@ Completamos con los datos solicitados y damos los privilegios que tendrá el nue
 Una vez registrado ya se puede usar esta cuenta en la pagina web, para diferenciar entre un Operador y un Administrador, en la pagina web se mostrara una insignia con el nivel de privilegios correspondiente.
 
 Ejemplo usuario nivel Operador:
+
 ![badge_operador](/Docs/img/badge_operador.png)
 
 Ejemplo usuario nivel Administrador:
+
 ![badge_admin](/Docs/img/badge_admin.png)
 
-> [!IMPORTANT] **Integridad del Sistema:** En la interfaz web, el sistema valida el token de autenticación y renderiza dinámicamente una **insignia de rango**. Esto no es solo un cambio estético; el Backend rechaza cualquier petición de modificación de datos (POST/PUT/DELETE) si el token no pertenece a un perfil con los permisos adecuados.
+>[!IMPORTANT]
+> **Integridad del Sistema:** En la interfaz web, el sistema valida el token de autenticación y renderiza dinámicamente una **insignia de rango**. Esto no es solo un cambio estético; el Backend rechaza cualquier petición de modificación de datos (POST/PUT/DELETE) si el token no pertenece a un perfil con los permisos adecuados.
 
 ## **🛠️ Solución de Problemas Comunes (Troubleshooting)**
 
