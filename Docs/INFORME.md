@@ -106,6 +106,7 @@ Se preguntara por los siguientes datos:
 - Nombre completo
 - RUT
 - Password (pide escribir 2 veces)
+
 Una vez realizado se mostrara en la terminal : `Superuser created successfully.`
 
 
@@ -244,7 +245,7 @@ Si necesitas borrar todo y empezar desde cero (incluyendo los datos de la base d
 docker compose down -v
 docker compose up --build
 ```
-(El flag `-v` elimina los volúmenes de datos, permitiendo una instalación limpia).
+>(El flag `-v` elimina los volúmenes de datos, permitiendo una instalación limpia).
 
 ## **Conclusiones y Proyección Técnica**
 
