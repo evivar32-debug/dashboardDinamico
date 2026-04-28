@@ -6,6 +6,7 @@ Sistema integral de telemetría diseñado para la visualización y registro de v
 
 ## 
 
+![menu_datos](/Docs/img/menu_datos.png)
 
 🛠️ Arquitectura del Sistema (IT/OT Convergence)
 
